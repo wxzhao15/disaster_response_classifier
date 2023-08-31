@@ -21,7 +21,7 @@ def load_data(messages_filepath, categories_filepath):
 
     for column in categories:
         categories[column] = categories[column].astype(str).str[-1]
-        categories[column] = pd.to_numeric(categories['column'])
+        categories[column] = pd.to_numeric(categories[column])
     
     df.drop('categories', axis=1, inplace=True)
     df = pd.concat([df,categories], axis=1)
@@ -36,7 +36,7 @@ def clean_data(df):
 
 
 def save_data(df, database_filename):
-    engine = create_engine('sqlite:///database_disaster_response.db')
+    engine = create_engine('sqlite:///data/database_disaster_response.db')
     df.to_sql(database_filename, engine, index=False)
     pass  
 
