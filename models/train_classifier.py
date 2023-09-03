@@ -39,9 +39,9 @@ def load_data(database_filepath):
     """
 
     # connect to SQL database
-    engine = create_engine('sqlite:///../data/database_disaster_response.db')
+    engine = create_engine('sqlite:///data/database_disaster_response.db')
     # load data
-    df = pd.read_sql_table("msg_data.db", con = engine)
+    df = pd.read_sql_table(database_filepath, con = engine)
 
     # extract X, Y, and category names to be predicted
     X = df['message']

@@ -69,7 +69,7 @@ def save_data(df, database_filename):
     df (pandas.DataFrame): cleaned dataframe to be loaded in the sql database
     database_filename (str): file name for the datatable to be saved as in defined database
     """
-
+    
     engine = create_engine('sqlite:///data/database_disaster_response.db')
     df.to_sql(database_filename, engine, index=False)
     pass  
