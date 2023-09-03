@@ -1,2 +1,3 @@
 models/RF_multioutput_best_model.pkl
 models/RF_multioutput_pipeline.pkl
+models/classifier.pkl

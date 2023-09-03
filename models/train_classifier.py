@@ -25,6 +25,19 @@ from sklearn.metrics import classification_report
 
 
 def load_data(database_filepath):
+    
+    """
+    Loading data from database - database_disaster_db with the defined database_filepath
+
+    Parameteres: 
+    - database_filepath (str): The path to sqlite database data file
+
+    Output:
+    - X (pandas.Series): Independent variables containing messages data
+    - Y (pandas.DataFrame): Dependent variables containing labeled categories
+    - category_names: a list of category names for prediction
+    """
+
     # connect to SQL database
     engine = create_engine('sqlite:///../data/database_disaster_response.db')
     # load data
@@ -39,6 +52,22 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
+
+    """
+    Transforming text to tokens through steps:
+    - lowring case
+    - removing stop words
+    - lemmatizing 
+    - tokenizing
+
+    Parameters:
+    - text (str): message data
+
+    Returns:
+    - tokens (list): cleaned and tokenized message data
+
+    """
+
     # normalizing text to lower case and remove punctuations
     normalize_text = re.sub(r"[^a-zA-Z0-9]+", " ", text.lower())
     words = word_tokenize(normalize_text)
@@ -51,6 +80,19 @@ def tokenize(text):
 
 
 def build_model():
+    """
+    Build machine learning pipeline for text classification using 
+    CountVectorizer and TfidfTransformer from sklearn package
+
+    In the trianing process we have fine-tuned the pipeline with GridSearch.
+    This Pipeline preprocess textual data with vectorization and Tfidf transformation
+    and using a multi-output classifier (with RF method) to predict on 36 labels classification
+
+    Returns:
+    - pipeline (sklearn.pipeline.Pipeline): A machine learning pipeline for text
+      classification.
+    """
+
     ## using the best params found by GridSearch in part below
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer = tokenize, ngram_range=(1,2))),
@@ -61,6 +103,21 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """
+    evaluating model performance using test dataset
+
+    Parameters:
+    - model: loaded text classification model
+    - X_test, Y_test: test dataset with preprocessed dependent and independent data
+    - category_names: the list of category names for prediction
+
+    Output:
+    this function will print out a pandas dataframe with column names "f1", "precision", "recall" 
+    row index being each predicting category that model classify for 
+
+    """
+
+
     Y_pred = model.predict(X_test)
 
     f1= []
@@ -89,6 +146,14 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
+    """
+    Saving model to the defined model_filepath
+
+    Parameters:
+    - model (a fitted Multioutput Classifier)
+    - model_filepath (str ending with .pkl): defining filepath to save the fitted classifier 
+    """
+
     with open(model_filepath, 'wb') as f:
         pickle.dump(model, f)
 
