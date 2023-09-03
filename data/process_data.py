@@ -5,12 +5,41 @@ from sqlalchemy import create_engine
 
 
 def load_data(messages_filepath, categories_filepath):
+    """
+    Loading raw messages and categories data from data folder using read_csv 
+    and merge two datasets together joining on 'id' (with inner join to remove
+    data rows that without corresponding label or message information)
+
+    Parameters:
+    - messages_filepath(str): file path to messages data
+    - categories_filepath(str): file path to categories data
+
+    Return:
+    - df (pandas.DataFrame): merged dataframe
+    """
+
     # read in data with the input file paths
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
 
     # merge two datasets
-    df=messages.merge(categories, how = 'outer', on = 'id')
+    df=messages.merge(categories, how = 'inner', on = 'id')
+
+    return df
+
+
+def clean_data(df):
+    """
+    cleaning data and transform them into analyzable format. In this function, we 
+    split categories into 36 clean separate columns with corresponding category name
+
+    Parameters:
+    df (pandas.DataFrame): dataframe with both raw message and category information
+
+    Output: 
+    df (pandas.DataFrame): cleaned dataframe with categories being splited into 36
+    sperate columns and duplicated rows removed
+    """
 
     # split categories into seperate columns
     categories = df['categories'].str.split(pat=';', expand=True)
@@ -26,16 +55,21 @@ def load_data(messages_filepath, categories_filepath):
     df.drop('categories', axis=1, inplace=True)
     df = pd.concat([df,categories], axis=1)
 
-    return df
-
-
-def clean_data(df):
     # remove duplicated rows
     df.drop_duplicates(inplace=True)
     return(df)
 
 
 def save_data(df, database_filename):
+    """
+    saving cleaned data frame into database with the database_filename 
+    defined in argument
+
+    parameters
+    df (pandas.DataFrame): cleaned dataframe to be loaded in the sql database
+    database_filename (str): file name for the datatable to be saved as in defined database
+    """
+
     engine = create_engine('sqlite:///data/database_disaster_response.db')
     df.to_sql(database_filename, engine, index=False)
     pass  
