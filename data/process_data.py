@@ -57,6 +57,7 @@ def clean_data(df):
 
     # remove duplicated rows
     df.drop_duplicates(inplace=True)
+    df = df.loc[df['related']!=2]
     return(df)
 
 
