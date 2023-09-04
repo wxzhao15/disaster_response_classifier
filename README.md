@@ -36,6 +36,8 @@ containing the pyton files that create the front-end interface which hosts the M
 - json
 - plotly
 
+Please refer to requirement.txt file in directory for more details.
+
 
 ## Instructions:
 1. Run the following commands in the project's root directory to set up your database and model.
