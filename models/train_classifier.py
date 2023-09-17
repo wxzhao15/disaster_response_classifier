@@ -89,17 +89,26 @@ def build_model():
     and using a multi-output classifier (with RF method) to predict on 36 labels classification
 
     Returns:
-    - pipeline (sklearn.pipeline.Pipeline): A machine learning pipeline for text
-      classification.
+    -  (sklearn.model_selection.GridSearchCV): A GridSearchCV object that encapsulates
+       the machine learning pipeline for text classification.
     """
 
     ## using the best params found by GridSearch in part below
     pipeline = Pipeline([
-        ('vect', CountVectorizer(tokenizer = tokenize, ngram_range=(1,2))),
-        ('tfidf', TfidfTransformer(sublinear_tf=True)),
+        ('vect', CountVectorizer(tokenizer = tokenize)),
+        ('tfidf', TfidfTransformer()),
         ('cls',MultiOutputClassifier(RandomForestClassifier()))
     ])
-    return pipeline
+
+    parameters = {
+        'vect__ngram_range':[(1,1),(1,2)],
+        'tfidf__sublinear_tf':[False, True],
+		'cls__estimator__min_samples_split': [2, 4]
+    }
+
+    cv = GridSearchCV(pipeline, param_grid = parameters)
+
+    return cv
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
